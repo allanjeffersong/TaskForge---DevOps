@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: taskforge_db
+    restart: always
+    environment:
+      POSTGRES_DB: taskforge
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./backend
+    container_name: taskforge_api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./frontend
+    container_name: taskforge_web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
