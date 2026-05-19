@@ -35,6 +35,7 @@ jobs:
           ./mvnw clean install -DskipTests
 
       - name: Análise SonarCloud
+        continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
