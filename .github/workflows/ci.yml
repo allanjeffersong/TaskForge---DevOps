@@ -26,13 +26,6 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Cache Maven
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
       - name: Dar permissão ao Maven Wrapper
         run: chmod +x backend/mvnw
 
@@ -47,6 +40,7 @@ jobs:
         run: |
           cd backend
           ./mvnw sonar:sonar \
+          -DskipTests \
           -Dsonar.projectKey=allanjeffersong_TaskForge---DevOps \
           -Dsonar.organization=allanjeffersong \
           -Dsonar.host.url=https://sonarcloud.io
