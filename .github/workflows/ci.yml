@@ -6,13 +6,8 @@ on:
       - main
       - develop
 
-  pull_request:
-    branches:
-      - main
-
 jobs:
   build:
-    name: Build and Analyze
     runs-on: ubuntu-latest
 
     steps:
@@ -26,10 +21,10 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Dar permissão ao Maven Wrapper
+      - name: Permissão Maven Wrapper
         run: chmod +x backend/mvnw
 
-      - name: Build do projeto
+      - name: Build
         run: |
           cd backend
           ./mvnw clean install -DskipTests
@@ -41,7 +36,4 @@ jobs:
           cd backend
           ./mvnw sonar:sonar \
           -DskipTests=true \
-          -Dsonar.qualitygate.wait=false \
-          -Dsonar.projectKey=allanjeffersong_TaskForge---DevOps \
-          -Dsonar.organization=allanjeffersong \
-          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.qualitygate.wait=false
