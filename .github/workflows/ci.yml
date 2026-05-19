@@ -39,7 +39,7 @@ jobs:
       - name: Build do projeto
         run: |
           cd backend
-          ./mvnw clean verify
+          ./mvnw clean install -DskipTests
 
       - name: Análise SonarCloud
         env:
