@@ -34,14 +34,14 @@ jobs:
           cd backend
           ./mvnw clean install -DskipTests
 
-      - name: Análise SonarCloud
-        continue-on-error: true
+      - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           cd backend
           ./mvnw sonar:sonar \
-          -DskipTests \
+          -DskipTests=true \git add .
+          -Dsonar.qualitygate.wait=false \
           -Dsonar.projectKey=allanjeffersong_TaskForge---DevOps \
           -Dsonar.organization=allanjeffersong \
           -Dsonar.host.url=https://sonarcloud.io
