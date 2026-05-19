@@ -40,7 +40,7 @@ jobs:
         run: |
           cd backend
           ./mvnw sonar:sonar \
-          -DskipTests=true \git add .
+          -DskipTests=true \
           -Dsonar.qualitygate.wait=false \
           -Dsonar.projectKey=allanjeffersong_TaskForge---DevOps \
           -Dsonar.organization=allanjeffersong \
