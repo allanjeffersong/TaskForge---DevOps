@@ -32,7 +32,7 @@ jobs:
       - name: Build e testes com cobertura
         run: |
           cd backend
-          ./mvnw clean verify jacoco:report
+          ./mvnw clean verify
 
       - name: Análise SonarCloud
         env:
