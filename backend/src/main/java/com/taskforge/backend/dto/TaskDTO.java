@@ -1,5 +1,13 @@
+package com.taskforge.backend.dto;
+
+import com.taskforge.backend.entity.Task;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
