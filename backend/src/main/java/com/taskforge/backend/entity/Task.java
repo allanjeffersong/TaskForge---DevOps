@@ -1,12 +1,8 @@
-package com.taskforge.backend.entity;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = "tasks")
 public class Task {
@@ -49,36 +45,6 @@ public class Task {
         updatedAt = LocalDateTime.now();
     }
 
-    public enum Priority {
-        BAIXA, MEDIA, ALTA
-    }
-
-    public enum Status {
-        PENDENTE, EM_ANDAMENTO, CONCLUIDA
-    }
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public Priority getPriority() { return priority; }
-    public void setPriority(Priority priority) { this.priority = priority; }
-
-    public Status getStatus() { return status; }
-    public void setStatus(Status status) { this.status = status; }
-
-    public LocalDate getDueDate() { return dueDate; }
-    public void setDueDate(LocalDate dueDate) { this.dueDate = dueDate; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public enum Priority { BAIXA, MEDIA, ALTA }
+    public enum Status { PENDENTE, EM_ANDAMENTO, CONCLUIDA }
 }
