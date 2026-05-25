@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +45,10 @@ class TaskServiceTest {
         taskDTO.setTitle("Tarefa de teste");
         taskDTO.setDescription("Descrição de teste");
         taskDTO.setPriority(Task.Priority.ALTA);
+        taskDTO.setStatus(Task.Status.PENDENTE);
     }
+
+    // ==================== findAll ====================
 
     @Test
     void findAll_deveRetornarListaDeTarefas() {
@@ -57,12 +61,24 @@ class TaskServiceTest {
     }
 
     @Test
+    void findAll_deveRetornarListaVazia_quandoNaoHaTarefas() {
+        when(taskRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<TaskDTO> result = taskService.findAll();
+
+        assertThat(result).isEmpty();
+    }
+
+    // ==================== findById ====================
+
+    @Test
     void findById_deveRetornarTarefa_quandoExiste() {
         when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
 
         TaskDTO result = taskService.findById(1L);
 
         assertThat(result.getTitle()).isEqualTo("Tarefa de teste");
+        assertThat(result.getPriority()).isEqualTo(Task.Priority.ALTA);
     }
 
     @Test
@@ -74,8 +90,52 @@ class TaskServiceTest {
                 .hasMessageContaining("99");
     }
 
+    // ==================== findByFilters ====================
+
     @Test
-    void create_deveSalvarESRetornarTarefa() {
+    void findByFilters_semFiltros_deveRetornarTodas() {
+        when(taskRepository.findAll()).thenReturn(Arrays.asList(task));
+
+        List<TaskDTO> result = taskService.findByFilters(null, null);
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void findByFilters_comStatus_deveRetornarFiltradas() {
+        when(taskRepository.findByStatus(Task.Status.PENDENTE)).thenReturn(Arrays.asList(task));
+
+        List<TaskDTO> result = taskService.findByFilters("PENDENTE", null);
+
+        assertThat(result).hasSize(1);
+        verify(taskRepository).findByStatus(Task.Status.PENDENTE);
+    }
+
+    @Test
+    void findByFilters_comPriority_deveRetornarFiltradas() {
+        when(taskRepository.findByPriority(Task.Priority.ALTA)).thenReturn(Arrays.asList(task));
+
+        List<TaskDTO> result = taskService.findByFilters(null, "ALTA");
+
+        assertThat(result).hasSize(1);
+        verify(taskRepository).findByPriority(Task.Priority.ALTA);
+    }
+
+    @Test
+    void findByFilters_comStatusEPriority_deveRetornarFiltradas() {
+        when(taskRepository.findByStatusAndPriority(Task.Status.PENDENTE, Task.Priority.ALTA))
+                .thenReturn(Arrays.asList(task));
+
+        List<TaskDTO> result = taskService.findByFilters("PENDENTE", "ALTA");
+
+        assertThat(result).hasSize(1);
+        verify(taskRepository).findByStatusAndPriority(Task.Status.PENDENTE, Task.Priority.ALTA);
+    }
+
+    // ==================== create ====================
+
+    @Test
+    void create_deveSalvarERetornarTarefa() {
         when(taskRepository.save(any(Task.class))).thenReturn(task);
 
         TaskDTO result = taskService.create(taskDTO);
@@ -83,6 +143,8 @@ class TaskServiceTest {
         assertThat(result.getTitle()).isEqualTo("Tarefa de teste");
         verify(taskRepository, times(1)).save(any(Task.class));
     }
+
+    // ==================== update ====================
 
     @Test
     void update_deveAtualizarTarefa_quandoExiste() {
@@ -92,6 +154,23 @@ class TaskServiceTest {
         TaskDTO updated = new TaskDTO();
         updated.setTitle("Título atualizado");
         updated.setPriority(Task.Priority.MEDIA);
+        updated.setStatus(Task.Status.EM_ANDAMENTO);
+
+        TaskDTO result = taskService.update(1L, updated);
+
+        assertThat(result).isNotNull();
+        verify(taskRepository, times(1)).save(any(Task.class));
+    }
+
+    @Test
+    void update_deveAtualizarTarefa_semStatus() {
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
+        when(taskRepository.save(any(Task.class))).thenReturn(task);
+
+        TaskDTO updated = new TaskDTO();
+        updated.setTitle("Título atualizado");
+        updated.setPriority(Task.Priority.BAIXA);
+        // status null — não deve alterar o status existente
 
         TaskDTO result = taskService.update(1L, updated);
 
@@ -104,8 +183,11 @@ class TaskServiceTest {
         when(taskRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> taskService.update(99L, taskDTO))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("99");
     }
+
+    // ==================== delete ====================
 
     @Test
     void delete_deveDeletarTarefa_quandoExiste() {
@@ -121,6 +203,7 @@ class TaskServiceTest {
         when(taskRepository.existsById(99L)).thenReturn(false);
 
         assertThatThrownBy(() -> taskService.delete(99L))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("99");
     }
 }
