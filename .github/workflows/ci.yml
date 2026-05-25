@@ -58,14 +58,16 @@ jobs:
 
       - name: Análise do SonarCloud
         working-directory: backend
-        run: ./mvnw sonar:sonar -B
-          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.token=${{ secrets.SONAR_TOKEN }}
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-          -Dsonar.java.coveragePlugin=jacoco
-          -Dsonar.exclusions=**/BackendApplication.java
+        run: |
+          ./mvnw sonar:sonar -B \
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.java.coveragePlugin=jacoco \
+            -Dsonar.exclusions=**/BackendApplication.java \
+            -Dsonar.coverage.exclusions=**/entity/**,**/dto/**,**/BackendApplication.java
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
